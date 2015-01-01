@@ -178,12 +178,12 @@ module.exports = ( grunt ) ->
             ignore : set.care 
 
 
-        # data.dirs = [data.dirs] if 'string' is grunt.util.kindOf data.dirs
+        data.dirs = [data.dirs] if 'string' is grunt.util.kindOf data.dirs
       
-        # for dir in data.dirs
-        #   Watch dir
+        for dir in data.dirs
+          Watch dir
 
-        Watch data.dir
+        # Watch data.dir
       else 
         log.writeln "Continue Watching..."
 
