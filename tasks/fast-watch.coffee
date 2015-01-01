@@ -178,9 +178,9 @@ module.exports = ( grunt ) ->
             ignore : set.care 
 
 
-        data.dirs = [data.dirs] if 'string' is grunt.util.kindOf data.dirs
+        data.dir = [data.dir] if 'string' is grunt.util.kindOf data.dir
       
-        for dir in data.dirs
+        for dir in data.dir
           Watch dir
 
         # Watch data.dir
