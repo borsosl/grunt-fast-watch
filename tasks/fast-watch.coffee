@@ -32,6 +32,7 @@ module.exports = ( grunt ) ->
     target = @target
     data = @data
     options = @options()
+    IgnoreSubDir = null
 
     unless memory[target]?
       memory[target] = {}
@@ -88,7 +89,7 @@ module.exports = ( grunt ) ->
       # return if filename is null
       pathname = dirname
       pathname +=  '/' + filename if filename
-      pathname = poxislize(path.relative data.dir, pathname)
+      pathname = poxislize(path.relative '.', pathname)
 
       fs.exists pathname, (exists)->
         return unless exists
@@ -99,7 +100,7 @@ module.exports = ( grunt ) ->
 
       # log.writeln'watch event - ', event, pathname
       # console.log("\x1B[1;31m[Watcher]\x1B[0m   watch - ", arguments)
-      return if IsIgnoreSubDir(pathname) 
+      # return if IsIgnoreSubDir(pathname)
       verbose.writeln 'watch event - ' , event,  " f: ", filename, ' d: ', dirname
 
         # return log.writeln'IgnoreSubDird event - ',  event, filename
@@ -115,7 +116,7 @@ module.exports = ( grunt ) ->
       # txt = "Watched '#{pathname}' #{event}"
       if debounceTimer is null
         pathsOfEvent = []
-        pathsOfEvent.push pathname
+        pathsOfEvent.push poxislize path.resolve pathname
         debounceTimer = setTimeout ()->
           debounceTimer = null
 
@@ -125,7 +126,7 @@ module.exports = ( grunt ) ->
           matchUp arrayUnique pathsOfEvent
         ,500
       else
-        pathsOfEvent.push pathname
+        pathsOfEvent.push poxislize path.resolve pathname
 
     matchUp = (paths)->
       verbose.writeln 'Match up - paths of event : ', paths
@@ -145,6 +146,7 @@ module.exports = ( grunt ) ->
  
       if tasksToCall.length > 0
         verbose.writeln 'Call Tasks', tasksToCall
+        grunt._fastWatch_paths = paths
         grunt.task.run tasksToCall
         grunt.task.run "fastWatch:#{target}"
         done()
@@ -178,12 +180,14 @@ module.exports = ( grunt ) ->
             ignore : set.care 
 
 
-        # data.dirs = [data.dirs] if 'string' is grunt.util.kindOf data.dirs
+        data.dirs = [data.dirs] if 'string' is grunt.util.kindOf data.dirs
       
-        # for dir in data.dirs
-        #   Watch dir
+        if data.dirs
+          for dir in data.dirs
+            Watch dir
 
-        Watch data.dir
+        if data.dir
+          Watch data.dir
       else 
         log.writeln "Continue Watching..."
 
